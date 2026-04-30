@@ -25,8 +25,7 @@ cd server
 npm run dev
 ```
 
-Server runs on `http://localhost:3001`  
-WebSocket available at `ws://localhost:3001/v1/stream`
+Server runs on `http://localhost:3001`
 
 ### 3. Run the frontend
 
@@ -43,9 +42,10 @@ Frontend opens at `http://localhost:5173`
 
 ```
 helpdeaf/
-  client/       React + Vite + Three.js frontend
-  server/       Node.js + Express + WebSocket backend
-  vercel.json   Vercel deployment config (frontend)
+  api/v1/         Vercel serverless functions (translate, health, models)
+  client/         React + Vite + Three.js frontend
+  server/         Node.js + Express server (local development only)
+  vercel.json     Vercel deployment config
 ```
 
 ---
@@ -55,13 +55,12 @@ helpdeaf/
 ```
 Browser (React + Three.js)
   |
-  |-- POST /v1/translate  -->  Express REST API
-  |                              |-- ASR Service (speech to text)
-  |                              |-- NMT Service (text to glosses)
-  |                              +-- Motion Synthesizer (glosses to animation)
+  +-- POST /v1/translate  -->  Vercel Serverless Function (production)
+  |                        -->  Express server on port 3001 (local dev)
   |
-  +-- WebSocket /v1/stream  -->  Streaming Service
-                                   +-- 30fps Animation Frames
+  +-- Client-side animation loop (requestAnimationFrame at 30fps)
+         |-- No WebSocket needed in production
+         +-- Avatar pose driven by gloss sequence from API response
 ```
 
 ---
@@ -80,72 +79,47 @@ Browser (React + Three.js)
 
 ## API Endpoints
 
-| Method    | Path                        | Description               |
-|-----------|-----------------------------|---------------------------|
-| GET       | /v1/health                  | System health check       |
-| POST      | /v1/translate               | Text or audio to glosses  |
-| GET       | /v1/animations/:id          | Get animation metadata    |
-| GET       | /v1/models                  | List registered models    |
-| WebSocket | /v1/stream                  | Real-time frame streaming |
+| Method | Path             | Description              |
+|--------|------------------|--------------------------|
+| GET    | /v1/health       | System health check      |
+| POST   | /v1/translate    | Text or audio to glosses |
+| GET    | /v1/models       | List registered models   |
 
 ---
 
-## Deployment
+## Deployment — Vercel (free, zero config)
 
-### Frontend — Vercel
+No environment variables. No separate backend. One deploy.
 
-1. Import the repository on [vercel.com](https://vercel.com)
-2. Set **Root Directory** to `client`
-3. Vercel auto-detects Vite. Build command: `npm run build`, output: `dist`
-4. Add environment variables in the Vercel dashboard:
+1. Push the repository to GitHub
+2. Go to [vercel.com](https://vercel.com) and click **New Project**
+3. Import your GitHub repository
+4. Leave all settings as default — Vercel reads `vercel.json` automatically
+5. Click **Deploy**
 
-```
-VITE_API_URL=https://your-backend.up.railway.app
-VITE_WS_URL=wss://your-backend.up.railway.app/v1/stream
-```
+Your app will be live at `https://your-project.vercel.app`
 
-### Backend — Railway
-
-1. Import the repository on [railway.app](https://railway.app)
-2. Set **Root Directory** to `server`
-3. Railway auto-detects Node.js and runs `node index.js`
-4. Copy the generated Railway URL and paste it into the Vercel env vars above
-
----
-
-## Environment Variables
-
-### client/.env.development (local)
-
-```
-VITE_API_URL=http://localhost:3001
-VITE_WS_URL=ws://localhost:3001/v1/stream
-```
-
-### client/.env.production (set in Vercel dashboard)
-
-```
-VITE_API_URL=https://your-backend.up.railway.app
-VITE_WS_URL=wss://your-backend.up.railway.app/v1/stream
-```
+The API functions in `api/v1/` are deployed automatically alongside the frontend.
 
 ---
 
 ## Tech Stack
 
-| Layer     | Technology                        |
-|-----------|-----------------------------------|
-| Frontend  | React 18, Vite, Three.js          |
-| Backend   | Node.js, Express, ws              |
-| 3D Avatar | Three.js procedural skeleton      |
-| Streaming | WebSocket at 30fps                |
-| Fonts     | Roboto Condensed (Google Fonts)   |
+| Layer      | Technology                       |
+|------------|----------------------------------|
+| Frontend   | React 18, Vite, Three.js         |
+| API        | Vercel Serverless Functions      |
+| Local dev  | Node.js, Express                 |
+| 3D Avatar  | Three.js procedural skeleton     |
+| Animation  | requestAnimationFrame at 30fps   |
+| Fonts      | Roboto Condensed (Google Fonts)  |
 
 ---
 
 ## Notes
 
-This is a prototype with simulated pipeline responses. The 3D avatar uses a procedurally generated humanoid skeleton animated with pose data streamed over WebSocket at 30fps.
+This is a prototype with simulated pipeline responses. The 3D avatar uses a
+procedurally generated humanoid skeleton animated at 30fps entirely in the browser.
 
 Production deployment would replace the mock services with:
 

@@ -17,14 +17,109 @@ const SUPPORTED_LANGUAGES = {
   om: "Oromo",
 };
 
-// Richer gloss sets — more signs per language so animation cycles through more variety
-const MOCK_GLOSSES = {
-  ar: ["مرحبا", "كيف", "حال", "أنت", "اليوم", "شكرا", "نعم", "لا", "مساعدة"],
-  sw: ["HABARI", "NZURI", "ASANTE", "KARIBU", "SAWA", "NDIYO", "HAPANA", "MSAADA", "SHULE"],
-  ha: ["SANNU", "LAFIYA", "NAGODE", "YAUWA", "KANA", "TAIMAKO", "MAKARANTA", "ASIBITI"],
-  yo: ["ẸKÁÀBỌ̀", "BÁWO", "NI", "DÁADÁA", "ÀṢẸ", "ẸẸ", "RÁRÁ", "ÌRÀNLỌ́WỌ́"],
-  om: ["AKKAM", "NAGAA", "GALATOOMAA", "DHUFAA", "MAAL", "EEYYEE", "LAKKI", "GARGAARSA"],
+// ─── Word → Gloss dictionaries ────────────────────────────────────────────────
+const WORD_TO_GLOSS = {
+  sw: {
+    "habari": "HABARI", "jambo": "HABARI", "hujambo": "HABARI", "mambo": "HABARI",
+    "salama": "SALAMA", "karibu": "KARIBU", "karibuni": "KARIBU",
+    "asante": "ASANTE", "asanteni": "ASANTE", "nashukuru": "ASANTE",
+    "sawa": "SAWA", "nzuri": "NZURI", "vizuri": "NZURI",
+    "ndiyo": "NDIYO", "ndio": "NDIYO", "hapana": "HAPANA", "la": "HAPANA",
+    "mimi": "MIMI", "wewe": "WEWE", "yeye": "YEYE", "sisi": "SISI",
+    "mtu": "MTU", "mtoto": "MTOTO", "mama": "MAMA", "baba": "BABA", "daktari": "DAKTARI",
+    "shule": "SHULE", "skuli": "SHULE",
+    "hospitali": "HOSPITALI", "kliniki": "HOSPITALI",
+    "nyumba": "NYUMBA", "mji": "MJI", "duka": "DUKA",
+    "ofisi": "OFISI", "benki": "BENKI",
+    "wapi": "WAPI", "lini": "LINI", "nani": "NANI", "nini": "NINI",
+    "jinsi": "JINSI", "iko": "IKO", "ipo": "IKO", "yuko": "IKO",
+    "hapa": "HAPA", "pale": "PALE", "mbali": "MBALI",
+    "taka": "TAKA", "nataka": "TAKA", "ninahitaji": "HITAJI", "hitaji": "HITAJI",
+    "nenda": "NENDA", "kuja": "KUJA", "rudi": "RUDI",
+    "soma": "SOMA", "andika": "ANDIKA", "sema": "SEMA",
+    "kula": "KULA", "kunywa": "KUNYWA", "lala": "LALA",
+    "saidia": "SAIDIA", "msaada": "MSAADA", "penda": "PENDA",
+    "maji": "MAJI", "chakula": "CHAKULA", "dawa": "DAWA",
+    "pesa": "PESA", "kazi": "KAZI", "leo": "LEO", "kesho": "KESHO", "jana": "JANA",
+    "sasa": "SASA", "asubuhi": "ASUBUHI", "jioni": "JIONI",
+    "kubwa": "KUBWA", "ndogo": "NDOGO", "mgonjwa": "MGONJWA", "afya": "AFYA",
+  },
+  ar: {
+    "مرحبا": "MARHABA", "مرحباً": "MARHABA", "السلام": "SALAM",
+    "أهلا": "AHLAN", "شكرا": "SHUKRAN", "شكراً": "SHUKRAN", "عفوا": "AFWAN",
+    "نعم": "NAAM", "لا": "LAA",
+    "أنا": "ANA", "أنت": "ANTA", "هو": "HUWA", "هي": "HIYA",
+    "طفل": "TIFL", "دكتور": "DOKTOR", "معلم": "MUALLIM",
+    "مدرسة": "MADRASA", "مستشفى": "MUSTASHFA",
+    "بيت": "BAYT", "منزل": "MANZIL", "مسجد": "MASJID", "سوق": "SUUQ",
+    "أين": "AYNA", "متى": "MATA", "من": "MAN", "ماذا": "MATHA",
+    "كيف": "KAYFA", "هنا": "HUNA", "هناك": "HUNAAK",
+    "أريد": "URIID", "أحتاج": "AHTAAJ",
+    "ماء": "MAA", "طعام": "TAAM", "دواء": "DAWAA",
+    "اليوم": "ALYAWM", "غداً": "GHADAN", "أمس": "AMS",
+    "حال": "HAL", "صحة": "SIHHA",
+  },
+  ha: {
+    "sannu": "SANNU", "barka": "BARKA", "nagode": "NAGODE",
+    "yauwa": "YAUWA", "a'a": "AA",
+    "yaro": "YARO", "mace": "MACE", "mutum": "MUTUM",
+    "likita": "LIKITA", "malami": "MALAMI",
+    "makaranta": "MAKARANTA", "asibiti": "ASIBITI",
+    "gida": "GIDA", "masallaci": "MASALLACI", "kasuwa": "KASUWA",
+    "yaushe": "YAUSHE", "wane": "WANE", "me": "ME", "yaya": "YAYA",
+    "nan": "NAN", "can": "CAN",
+    "tafi": "TAFI", "zo": "ZO", "ci": "CI", "sha": "SHA",
+    "taimaka": "TAIMAKA",
+    "ruwa": "RUWA", "abinci": "ABINCI", "magani": "MAGANI",
+    "kudi": "KUDI", "aiki": "AIKI", "yau": "YAU", "gobe": "GOBE",
+    "lafiya": "LAFIYA",
+  },
+  yo: {
+    "kaabo": "KAAABO", "bawo": "BAWO", "daadaa": "DAADAA",
+    "ee": "EE", "rara": "RARA",
+    "omo": "OMO", "dokita": "DOKITA", "oluko": "OLUKO",
+    "ile-iwe": "ILE-IWE", "ile-iwosan": "ILE-IWOSAN",
+    "ile": "ILE", "oja": "OJA",
+    "nibo": "NIBO", "ta": "TA", "ki": "KI",
+    "lo": "LO", "wa": "WA", "je": "JE", "mu": "MU",
+    "iranloowo": "IRANLOOWO",
+    "omi": "OMI", "ounje": "OUNJE", "oogun": "OOGUN",
+    "owo": "OWO", "ise": "ISE", "oni": "ONI",
+  },
+  om: {
+    "akkam": "AKKAM", "nagaa": "NAGAA", "galatoomaa": "GALATOOMAA",
+    "eeyyee": "EEYYEE", "lakki": "LAKKI",
+    "namni": "NAMNI", "dokitara": "DOKITARA", "barsiisaa": "BARSIISAA",
+    "barumsaa": "MANA-BARUMSAA", "mana-barumsaa": "MANA-BARUMSAA",
+    "hospitaala": "HOSPITAALA", "mana": "MANA", "magaalaa": "MAGAALAA",
+    "eessa": "EESSA", "yoom": "YOOM", "eenyu": "EENYU",
+    "maal": "MAAL", "maaliif": "MAALIIF",
+    "jira": "JIRA", "jiraa": "JIRA",
+    "barbaada": "BARBAADA", "deemi": "DEEMI", "koottu": "KOOTTU",
+    "gargaarsa": "GARGAARSA",
+    "bishaan": "BISHAAN", "nyaata": "NYAATA", "qorichaa": "QORICHA",
+    "hojii": "HOJII", "fayyaa": "FAYYAA",
+  },
 };
+
+function wordToGloss(word, lang) {
+  const dict = WORD_TO_GLOSS[lang] || {};
+  const key  = word.toLowerCase().replace(/[،,\.!?؟]/g, "");
+  if (dict[key]) return { sign: dict[key], fingerspelled: false };
+  return { sign: word.toUpperCase(), fingerspelled: true };
+}
+
+function buildGlossesFromText(text, lang) {
+  const words = text
+    .replace(/[،,\.!?؟\-_]/g, " ")
+    .split(/\s+/)
+    .filter(Boolean);
+  if (words.length === 0) return [];
+  return words.map((word) => {
+    const { sign, fingerspelled } = wordToGloss(word, lang);
+    return { source_word: word, sign, fingerspelled };
+  });
+}
 
 const MOCK_TRANSCRIPTS = {
   ar: "مرحباً، كيف حالك اليوم؟",
@@ -79,22 +174,24 @@ app.post("/v1/translate", (req, res) => {
       input_text: text,
       transcript: text,
       glosses: glosses.map((g, i) => ({
-        index: i,
-        gloss: g,
-        fingerspelled: false,
-        duration_ms: framesPerGloss * (1000 / 30),
+        index:         i,
+        source_word:   g.source_word,
+        gloss:         g.sign,
+        fingerspelled: g.fingerspelled,
+        duration_ms:   framesPerGloss * (1000 / 30),
       })),
       animation: {
-        animation_id: animationId,
-        asset_url: `/v1/animations/${animationId}`,
-        frame_count: glosses.length * framesPerGloss,
+        animation_id:     animationId,
+        asset_url:        `/v1/animations/${animationId}`,
+        frame_count:      glosses.length * framesPerGloss,
+        frames_per_gloss: framesPerGloss,
         duration_seconds: (glosses.length * framesPerGloss) / 30,
-        quality_score: 0.82 + Math.random() * 0.15,
+        quality_score:    0.82 + Math.random() * 0.15,
       },
       pipeline_metadata: {
-        asr_confidence: null,
-        nmt_bleu: 0.73,
-        motion_quality: 0.84,
+        asr_confidence:   null,
+        nmt_bleu:         0.73,
+        motion_quality:   0.84,
         total_latency_ms: 1200 + Math.floor(Math.random() * 800),
       },
     });
@@ -140,18 +237,16 @@ wss.on("connection", (ws) => {
 
       const { source_language = "sw", text = "" } = msg;
       const glosses = buildGlossesFromText(text, source_language);
-
-      // Each gloss gets FRAMES_PER_GLOSS frames so the avatar visibly changes per sign
       const FRAMES_PER_GLOSS = 40;
       const TOTAL_FRAMES = glosses.length * FRAMES_PER_GLOSS;
 
       ws.send(JSON.stringify({
-        type: "STREAM_START",
-        total_frames: TOTAL_FRAMES,
-        glosses,
+        type:             "STREAM_START",
+        total_frames:     TOTAL_FRAMES,
+        glosses:          glosses.map((g) => g.sign),
         frames_per_gloss: FRAMES_PER_GLOSS,
-        transcript: text || MOCK_TRANSCRIPTS[source_language],
-        quality_score: 0.84,
+        transcript:       text || MOCK_TRANSCRIPTS[source_language],
+        quality_score:    0.84,
       }));
 
       let frameCount = 0;
@@ -161,31 +256,29 @@ wss.on("connection", (ws) => {
 
         if (frameCount >= TOTAL_FRAMES) {
           clearInterval(streamInterval);
-          ws.send(JSON.stringify({
-            type: "STREAM_END",
-            total_frames: TOTAL_FRAMES,
-            quality_score: 0.84,
-          }));
+          ws.send(JSON.stringify({ type: "STREAM_END", total_frames: TOTAL_FRAMES, quality_score: 0.84 }));
           return;
         }
 
-        const glossIndex      = Math.floor(frameCount / FRAMES_PER_GLOSS);
-        const frameInGloss    = frameCount % FRAMES_PER_GLOSS;
-        const glossProgress   = frameInGloss / FRAMES_PER_GLOSS; // 0→1 within this gloss
+        const glossIndex    = Math.floor(frameCount / FRAMES_PER_GLOSS);
+        const frameInGloss  = frameCount % FRAMES_PER_GLOSS;
+        const glossProgress = frameInGloss / FRAMES_PER_GLOSS;
+        const g             = glosses[glossIndex] || { source_word: "", sign: "" };
 
         ws.send(JSON.stringify({
-          type: "ANIMATION_FRAME",
+          type:           "ANIMATION_FRAME",
           frame_index:    frameCount,
           total_frames:   TOTAL_FRAMES,
           timestamp_ms:   (frameCount / 30) * 1000,
           gloss_index:    glossIndex,
-          gloss_label:    glosses[glossIndex] || "",
+          gloss_label:    g.sign,
+          source_word:    g.source_word,
           gloss_progress: glossProgress,
           interpolated:   false,
         }));
 
         frameCount++;
-      }, 33); // ~30 fps
+      }, 33);
     }
 
     if (msg.type === "STOP_STREAM") {
@@ -209,29 +302,6 @@ wss.on("connection", (ws) => {
 });
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-
-/**
- * Build a gloss list from the input text.
- * For the prototype we split the text into words and map each word to a gloss.
- * If the word matches a known gloss we use it; otherwise we use the word itself
- * (fingerspelling). This gives a different gloss count per input.
- */
-function buildGlossesFromText(text, lang) {
-  const pool = MOCK_GLOSSES[lang] || MOCK_GLOSSES.sw;
-
-  if (!text || !text.trim()) return pool.slice(0, 5);
-
-  // Split on whitespace / punctuation, filter empties
-  const words = text
-    .replace(/[،,\.!?؟]/g, " ")
-    .split(/\s+/)
-    .filter(Boolean);
-
-  if (words.length === 0) return pool.slice(0, 5);
-
-  // Map each word to a gloss (cycle through pool if more words than glosses)
-  return words.map((w, i) => pool[i % pool.length]);
-}
 
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {

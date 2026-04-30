@@ -1,7 +1,18 @@
+# Dependencies
 node_modules/
+
+# Build output
 dist/
-.env
+client/dist/
+
+# Local env secrets (never commit real secrets)
 .env.local
-.env.production
+.env.*.local
+
+# Logs
 *.log
+npm-debug.log*
+
+# OS
 .DS_Store
+Thumbs.db

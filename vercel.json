@@ -1,9 +1,13 @@
 {
-  "buildCommand": "npm install && npm run build",
-  "outputDirectory": "dist",
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "client/dist",
   "installCommand": "npm install",
-  "framework": "vite",
+  "framework": null,
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/v1/health",    "destination": "/api/v1/health"    },
+    { "source": "/v1/translate", "destination": "/api/v1/translate" },
+    { "source": "/v1/models",    "destination": "/api/v1/models"    },
+    { "source": "/(.*)",         "destination": "/index.html"       }
   ]
 }
