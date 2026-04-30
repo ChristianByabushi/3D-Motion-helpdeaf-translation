@@ -16,10 +16,11 @@ export default function TranslationInfo({ streamData, errorMsg, language, langua
 
   if (!streamData) return null;
 
-  const { glosses, transcript, qualityScore, totalFrames } = streamData;
-  const langInfo = languages.find((l) => l.code === language);
-  const qualityPct = Math.round((qualityScore || 0) * 100);
+  const { glossPairs, transcript, qualityScore, totalFrames } = streamData;
+  const langInfo    = languages.find((l) => l.code === language);
+  const qualityPct  = Math.round((qualityScore || 0) * 100);
   const qualityColor = qualityPct >= 80 ? "var(--success)" : qualityPct >= 60 ? "var(--warning)" : "var(--error)";
+  const activeIdx   = currentFrame?.gloss_index ?? -1;
 
   return (
     <div className={styles.panel}>
@@ -32,39 +33,41 @@ export default function TranslationInfo({ streamData, errorMsg, language, langua
             <span className={styles.langTag}>{langInfo.flag} {langInfo.name}</span>
           )}
         </div>
-        <p
-          className={styles.transcript}
-          dir={language === "ar" ? "rtl" : "ltr"}
-        >
+        <p className={styles.transcript} dir={language === "ar" ? "rtl" : "ltr"}>
           {transcript}
         </p>
       </div>
 
-      {/* Gloss sequence */}
+      {/* Gloss pairs — word → SIGN */}
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
           <span className={styles.sectionIcon}>🤟</span>
           <span className={styles.sectionTitle}>Sign Language Glosses</span>
-          <span className={styles.glossCount}>{glosses?.length || 0} signs</span>
+          <span className={styles.glossCount}>{glossPairs?.length || 0} signs</span>
         </div>
         <div className={styles.glossList}>
-          {(glosses || []).map((g, i) => (
-            <div key={i} className={styles.glossChip}>
+          {(glossPairs || []).map((g, i) => (
+            <div
+              key={i}
+              className={`${styles.glossChip} ${i === activeIdx ? styles.glossChipActive : ""}`}
+            >
               <span className={styles.glossIndex}>{i + 1}</span>
-              <span className={styles.glossText}>{g}</span>
+              <span className={styles.sourceWord} dir={language === "ar" ? "rtl" : "ltr"}>
+                {g.source_word}
+              </span>
+              <span className={styles.glossArrow}>→</span>
+              <span className={styles.glossSign}>{g.gloss}</span>
               {g.fingerspelled && <span className={styles.fingerTag}>FS</span>}
             </div>
           ))}
         </div>
       </div>
 
-      {/* Pipeline metadata */}
+      {/* Metadata */}
       <div className={styles.metaGrid}>
         <div className={styles.metaItem}>
           <span className={styles.metaLabel}>Quality Score</span>
-          <span className={styles.metaValue} style={{ color: qualityColor }}>
-            {qualityPct}%
-          </span>
+          <span className={styles.metaValue} style={{ color: qualityColor }}>{qualityPct}%</span>
         </div>
         <div className={styles.metaItem}>
           <span className={styles.metaLabel}>Total Frames</span>
@@ -77,9 +80,9 @@ export default function TranslationInfo({ streamData, errorMsg, language, langua
         <div className={styles.metaItem}>
           <span className={styles.metaLabel}>Status</span>
           <span className={`${styles.metaValue} ${styles[`status_${streamState}`]}`}>
-            {streamState === "streaming" ? "● Streaming" :
-             streamState === "done" ? "✓ Complete" :
-             streamState === "connecting" ? "⟳ Processing" : streamState}
+            {streamState === "streaming" ? "● Signing" :
+             streamState === "done"      ? "✓ Complete" :
+             streamState === "connecting"? "⟳ Processing" : streamState}
           </span>
         </div>
       </div>
@@ -89,8 +92,8 @@ export default function TranslationInfo({ streamData, errorMsg, language, langua
         <div className={styles.pipelineLabel}>Pipeline</div>
         <div className={styles.pipelineStages}>
           {[
-            { name: "ASR", icon: "🎙️", desc: "Speech Recognition" },
-            { name: "NMT", icon: "🔄", desc: "Text → Gloss" },
+            { name: "ASR",    icon: "🎙️", desc: "Speech Recognition" },
+            { name: "NMT",    icon: "🔄", desc: "Text → Gloss"       },
             { name: "Motion", icon: "🦾", desc: "Animation Synthesis" },
           ].map((stage, i) => (
             <React.Fragment key={stage.name}>

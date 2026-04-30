@@ -239,7 +239,7 @@ export default function AvatarViewer({
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0a1628);
+    scene.background = new THREE.Color(0x1a1a1a);
 
     const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 50);
     camera.position.set(0, 1.1, 3.2);
@@ -372,6 +372,7 @@ export default function AvatarViewer({
   useEffect(() => {
     if (!sceneRef.current) return;
     const colorMap = {
+      "dark":      { body: 0x4fc3f7, bg: 0x1a1a1a, ring: 0x4fc3f7 },
       "dark-blue": { body: 0x3b82f6, bg: 0x0a1628, ring: 0x3b82f6 },
       "purple":    { body: 0xa855f7, bg: 0x0e0a1e, ring: 0xa855f7 },
       "teal":      { body: 0x14b8a6, bg: 0x051418, ring: 0x14b8a6 },
@@ -431,9 +432,15 @@ export default function AvatarViewer({
           </div>
         )}
 
-        {/* Active gloss label */}
+        {/* Active gloss label — bottom of canvas */}
         {isStreaming && currentFrame?.gloss_label && (
           <div className={styles.glossLabel}>
+            {currentFrame.source_word && (
+              <>
+                <span className={styles.glossLabelSource}>{currentFrame.source_word}</span>
+                <span className={styles.glossLabelArrow}>→</span>
+              </>
+            )}
             <span className={styles.glossLabelIndex}>#{(currentFrame.gloss_index ?? 0) + 1}</span>
             <span className={styles.glossLabelText}>{currentFrame.gloss_label}</span>
           </div>

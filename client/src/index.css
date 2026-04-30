@@ -4,8 +4,37 @@
   padding: 0;
 }
 
-/* ── Theme: Dark Blue (default) ── */
+/* ── Theme: VSCode Dark (default) ── */
 :root,
+[data-theme="dark"] {
+  --bg: #1e1e1e;
+  --bg-grad: linear-gradient(135deg, #1e1e1e 0%, #252526 100%);
+  --surface: #252526;
+  --surface2: #2d2d2d;
+  --surface3: #333333;
+  --border: #3e3e42;
+  --border-light: #555558;
+  --accent: #4fc3f7;
+  --accent-glow: rgba(79, 195, 247, 0.15);
+  --accent2: #82aaff;
+  --accent3: #b2ceff;
+  --highlight: #c792ea;
+  --success: #4ec9b0;
+  --warning: #dcdcaa;
+  --error: #f44747;
+  --text: #d4d4d4;
+  --text-muted: #6a6a6a;
+  --text-dim: #9d9d9d;
+  --avatar-bg: #1a1a1a;
+  --avatar-body: #4fc3f7;
+  --avatar-skin: #d4956a;
+  --ring-color: #4fc3f7;
+  --radius: 14px;
+  --radius-sm: 9px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.6);
+}
+
+/* ── Theme: Dark Blue ── */
 [data-theme="dark-blue"] {
   --bg: #060b18;
   --bg-grad: linear-gradient(135deg, #060b18 0%, #0d1a2e 100%);

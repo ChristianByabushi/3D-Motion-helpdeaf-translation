@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./Header.module.css";
 
 const THEMES = [
+  { id: "dark",      label: "Dark",  swatch: ["#4fc3f7", "#1e1e1e"] },
   { id: "dark-blue", label: "Ocean", swatch: ["#3b82f6", "#0f1c30"] },
   { id: "purple",    label: "Night", swatch: ["#a855f7", "#130d22"] },
   { id: "teal",      label: "Teal",  swatch: ["#14b8a6", "#081a20"] },
