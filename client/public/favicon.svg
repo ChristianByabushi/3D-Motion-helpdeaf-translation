@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="32" fill="#2563eb"/>
+
+  <!-- Hand shape (ILY / "I Love You" sign — universally associated with Deaf culture) -->
+  <!-- Palm -->
+  <rect x="20" y="30" width="18" height="20" rx="4" fill="#ffffff"/>
+
+  <!-- Thumb (extended out-left) -->
+  <rect x="12" y="30" width="10" height="7" rx="3.5" fill="#ffffff"/>
+
+  <!-- Index finger (extended up) -->
+  <rect x="20" y="14" width="7" height="20" rx="3.5" fill="#ffffff"/>
+
+  <!-- Middle finger (folded — shorter) -->
+  <rect x="28" y="22" width="6" height="12" rx="3" fill="#e0eaff"/>
+
+  <!-- Ring finger (folded — shorter) -->
+  <rect x="34" y="24" width="5" height="10" rx="2.5" fill="#e0eaff"/>
+
+  <!-- Pinky (extended up) -->
+  <rect x="34" y="14" width="5" height="18" rx="2.5" fill="#ffffff"/>
+
+  <!-- Sound wave arcs (right side) — representing speech/audio input -->
+  <path d="M46 24 Q52 32 46 40" stroke="#93c5fd" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  <path d="M50 20 Q58 32 50 44" stroke="#bfdbfe" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.7"/>
+</svg>
